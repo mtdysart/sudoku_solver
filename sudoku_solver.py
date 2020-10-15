@@ -28,7 +28,7 @@ class SudokuSolver:
         """
         Returns True if matrix is 9x9.
         """
-        return matrix.ndim == 2 and matrix.shape[0] == 9 and matrix.shape[1] == 9
+        return matrix.ndim == 2 and matrix.shape == (9, 9)
 
     def is_valid_nums(self, matrix):
         """
@@ -36,17 +36,21 @@ class SudokuSolver:
         """
         return matrix[(matrix < 0) | (matrix > 9)].sum() == 0
 
-    # def is_duplicate_free(self, matrix):
-    #     """
-    #     Returns True if matrix has no invalid duplicates. 
-    #     """
-    #     for i in matrix.shape[0]:
-    #         for j in matrix.shape[1]:
-    #             if matrix[i, j] > 0 and not self.is_valid_element(matrix[i, j], i, j):
-    #                 return False
+    def is_final_solution(self):
+        """
+        Returns True if every element is valid. Should only be used to check condition of the final filled matrix.
+        Will return False if matrix contains any empty elements.
+        """
+        if 0 in self.matrix:
+            return False
 
-    #     return True
-                    
+        for i in range(self.matrix.shape[0]):
+            for j in range(self.matrix.shape[1]):
+                if not self.is_valid_element(self.matrix[i, j], i, j):
+                    return False
+
+        return True
+                
     def is_valid_element(self, num, row, col):
         """
         Returns True if num is a valid entry in position (i, j). According to Sudoku rules, there can be no duplicates along a 
@@ -87,7 +91,7 @@ class SudokuSolver:
 
     def next_loc(self, i, j):
         """
-        Returns a tuple for the next empty location to check. Order is left to right. 
+        Returns a tuple for the next empty location to check. Order is left to right, then top to bottom. 
         """
         next_i, next_j = i, j
 
@@ -99,9 +103,15 @@ class SudokuSolver:
 
 
     def find_solution(self, i, j):
+        """
+
+        """
+
         # Base case
         if 0 not in self.matrix:
-            return True
+            # Only need to check full validity if no empty cells are present (like in case that Solver is passed a bad full matrix)
+            # Otherwise algorithm will ensure validity at all steps
+            return self.is_final_solution()
 
         else:
             num = 1
@@ -120,11 +130,10 @@ class SudokuSolver:
     
                 num += 1
 
-                # Reset to 0 if all numbers tried and no solution in this path
-                if num == 10 and not is_solution:
-                    self.matrix[i, j] = 0
+            # Reset to 0 if all numbers tried and no solution in this path
+            if not is_solution:
+                self.matrix[i, j] = 0
                 
-            
             return is_solution
 
     def solve(self):
@@ -134,9 +143,11 @@ class SudokuSolver:
         if has_solution:
             print("A solution was found:")
             print(self.matrix)
+            return True
 
         else:
             print("This matrix has no solution.")
+            return False
 
 
 
