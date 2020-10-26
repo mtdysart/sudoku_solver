@@ -7,7 +7,8 @@ class SudokuSolver:
 
     def set_matrix(self, matrix):
         """
-        Sets the Sudoku matrix if it is valid. Use 0 to represent empty squares.
+        Sets the Sudoku matrix if it is valid type. Use 0 to represent empty squares.
+        Matrix is set to None if it is not of valid shape and contents.
         """
         try:
             matrix = matrix.astype('int32')
@@ -36,20 +37,12 @@ class SudokuSolver:
         """
         return matrix[(matrix < 0) | (matrix > 9)].sum() == 0
 
-    def is_final_solution(self):
+    def set_num(self, num, row, col):
         """
-        Returns True if every element is valid. Should only be used to check condition of the final filled matrix.
-        Will return False if matrix contains any empty elements.
+        Sets num at position (row, col). Num must be between 0 - 9 (0 represents empty).
         """
-        if 0 in self.matrix:
-            return False
-
-        for i in range(self.matrix.shape[0]):
-            for j in range(self.matrix.shape[1]):
-                if not self.is_valid_element(self.matrix[i, j], i, j):
-                    return False
-
-        return True
+        if num >= 0 and num <=9:
+            self.matrix[row, col] = int(num)
                 
     def is_valid_element(self, num, row, col):
         """
@@ -60,6 +53,7 @@ class SudokuSolver:
             - row: int. Row number between 0 and 8
             - col: int. Column number between 0 and 8
         """
+
         # Check if duplicate in row 
         for j in range(self.matrix.shape[1]):
             if j != col and self.matrix[row, j] == num:
@@ -91,7 +85,7 @@ class SudokuSolver:
 
     def next_loc(self, i, j):
         """
-        Returns a tuple for the next empty location to check. Order is left to right, then top to bottom. 
+        Returns a tuple for the next empty location to check. Traversal order is left to right, then top to bottom. 
         """
         next_i, next_j = i, j
 
@@ -101,10 +95,26 @@ class SudokuSolver:
 
         return next_i, next_j
 
+    def is_final_solution(self):
+        """
+        Returns True if every element is valid. Should only be used to check condition of the final filled matrix.
+        Will return False if matrix contains any empty elements.
+        """
+        
+        if 0 in self.matrix:
+            return False
+
+        for i in range(self.matrix.shape[0]):
+            for j in range(self.matrix.shape[1]):
+                if not self.is_valid_element(self.matrix[i, j], i, j):
+                    return False
+
+        return True
 
     def find_solution(self, i, j):
         """
-
+        Recursive backtracking algorithm to find a valid solution for the Sudoku matrix.
+        Returns True if a solution is found.
         """
 
         # Base case
@@ -120,7 +130,7 @@ class SudokuSolver:
             while num < 10 and not is_solution:
                 # Check if num is valid in position (i,j)
                 if self.is_valid_element(num, i, j):
-                    self.matrix[i, j] = num
+                    self.set_num(num, i, j)
                 
                     # Determine next position to fill
                     next_i, next_j = self.next_loc(i, j)
@@ -130,24 +140,34 @@ class SudokuSolver:
     
                 num += 1
 
-            # Reset to 0 if all numbers tried and no solution in this path
+            # Reset to 0 (empty) if all numbers tried and no solution in this path
             if not is_solution:
-                self.matrix[i, j] = 0
+                self.set_num(0, i, j)
                 
             return is_solution
 
     def solve(self):
+        """
+        Solves the Sudoku matrix, and returns the solution as numpy array. Solution can be accessed in matrix attribute.
+        """
         start_i, start_j = self.next_loc(0, 0)
         has_solution = self.find_solution(start_i, start_j)
 
-        if has_solution:
-            print("A solution was found:")
-            print(self.matrix)
-            return True
-
-        else:
-            print("This matrix has no solution.")
-            return False
+        return self.matrix if has_solution else None
 
 
+if __name__ == '__main__':
+    matrix = np.array([[1, 0, 0, 0, 8, 4, 0, 0, 0],
+                        [0, 0, 0, 1, 0, 0, 6, 0, 0],
+                        [0, 0, 0, 0, 9, 0, 0, 0, 0],
+                        [4, 0, 0, 7, 0, 0, 0, 8, 0],
+                        [3, 0, 0, 4, 0, 0, 0, 6, 0],
+                        [5, 0, 1, 0, 2, 8, 0, 7, 3],
+                        [0, 0, 0, 6, 0, 0, 0, 0, 5],
+                        [0, 0, 7, 0, 0, 1, 0, 0, 0],
+                        [0, 0, 0, 5, 4, 0, 0, 0, 8]])
 
+    solver = SudokuSolver(matrix)
+    solution = solver.solve()
+    print("The found solution was: ")
+    print(solution)
