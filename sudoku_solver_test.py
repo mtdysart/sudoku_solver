@@ -50,11 +50,10 @@ class TestSudokuSolver:
 
         assert solver_invalid_nums.matrix is None
 
-    # def test_matrix_invalid_dtype_throws_exception(self):
-    #     pass
-
-    # def test_matrix_non_numeric(self):
-    #     pass
+    def test_matrix_invalid_dtype_throws_exception(self):
+        with pytest.raises(ValueError):
+            invalid_type = "0 1 2 3 4 5 6 7 8"
+            SudokuSolver(invalid_type)
 
     def test_get_submatrix_coord(self):
         assert self.test_sudoku_solver.get_submatrix_coord(3, 2) == (3, 0)
@@ -148,20 +147,6 @@ class TestSudokuSolver:
                                             [9, 7, 8, 5, 3, 1, 6, 4, 2]])
 
         assert np.array_equal(empty_matrix_solver.solve(), empty_matrix_solution)
-
-    # def test_solution_when_matrix_has_no_solution(self):
-    #     matrix_no_solution = np.array([[5, 6, 8, 9, 1, 3, 4, 2, 7],
-    #                                 [1, 9, 7, 2, 5, 4, 6, 8, 3],
-    #                                 [3, 4, 2, 6, 8, 7, 9, 1, 5],
-    #                                 [6, 8, 5, 4, 7, 9, 1, 3, 2],
-    #                                 [7, 3, 4, 1, 6, 2, 5, 9, 8],
-    #                                 [2, 1, 9, 5, 3, 8, 7, 6, 4],
-    #                                 [9, 2, 6, 3, 4, 5, 8, 7, 1],
-    #                                 [8, 5, 1, 7, 2, 6, 3, 4, 9],
-    #                                 [4, 7, 3, 8, 9, 1, 2, 5, 6]])
-
-    #     impossible_solver = SudokuSolver(matrix_no_solution)
-    #     assert impossible_solver.solve() == False
 
     def test_solution_matrix_with_nonempty_first_element(self):
         matrix_nonempty_first_elem = np.array([[1, 0, 0, 0, 8, 4, 0, 0, 0],

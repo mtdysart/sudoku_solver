@@ -167,6 +167,8 @@ if __name__ == '__main__':
                         [0, 0, 7, 0, 0, 1, 0, 0, 0],
                         [0, 0, 0, 5, 4, 0, 0, 0, 8]])
 
+    
+
     solver = SudokuSolver(matrix)
     solution = solver.solve()
     print("The found solution was: ")
