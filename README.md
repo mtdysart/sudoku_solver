@@ -12,10 +12,10 @@
   * Outputs solution of puzzle on the console.
 * Unit tests for text-based solver: sudoku_solver_test.py
   * To run unit tests, use command: pytest
-* GUI solver: board.py, square.py, constants.py
+* GUI solver: board.py, square.py, constants.py, gui_main.py
 
 ## How to Play
-* Run board.py with command: python board.py
+* Run GUI with command: python gui_main.py
 * Click any square to select it (outline in blue) and then type a number between 1-9 to enter that number
 * Move selected square with arrow keys
 * Right click square to see if inputted number is correct (green border) or not (red border). Right click again to remove correctness check (ie, play the game without any help)
